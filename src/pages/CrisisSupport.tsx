@@ -233,7 +233,7 @@ export const CrisisSupport: React.FC = () => {
               </h2>
               
               <div className="space-y-4">
-                {warningSign.map((category, index) => {
+                {warningSigns.map((category: any, index: number) => {
                   const IconComponent = category.icon;
                   return (
                     <div key={index} className={`border-l-4 rounded-lg p-4 ${category.color}`}>
@@ -242,7 +242,7 @@ export const CrisisSupport: React.FC = () => {
                         <h3 className="font-semibold">{category.title}</h3>
                       </div>
                       <ul className="text-sm space-y-1">
-                        {category.signs.map((sign, signIndex) => (
+                        {category.signs.map((sign: string, signIndex: number) => (
                           <li key={signIndex} className="flex items-start">
                             <span className="mr-2">•</span>
                             <span>{sign}</span>

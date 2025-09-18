@@ -1,3 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  * {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  body {
+    background: #FFFFF0;
+  }
+}
+
+@layer components {
+  .cura-glass {
+    @apply backdrop-blur-lg bg-white/80 border border-white/20;
+  }
+
+  .cura-card {
+    @apply backdrop-blur-lg bg-white/70 rounded-2xl border border-white/30 shadow-xl;
+  }
+
+  .cura-button-primary {
+    @apply bg-gradient-to-r from-[#696cff] to-[#5a5df5] hover:from-[#5a5df5] hover:to-[#4c4de8] text-white font-semibold px-8 py-4 rounded-2xl transition-all duration-300 hover:shadow-lg hover:scale-105 text-base;
+  }
+
+  .cura-button-secondary {
+    @apply bg-white/80 hover:bg-white text-[#696cff] font-semibold px-8 py-4 rounded-2xl border border-white/40 transition-all duration-300 hover:shadow-lg hover:scale-105 text-base;
+  }
+
+  .cura-input {
+    @apply w-full px-6 py-4 bg-white/60 border border-white/30 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#696cff] focus:border-transparent transition-all duration-200 placeholder-gray-500 text-base;
+  }
+
+  .cura-gradient-text {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-[#696cff] to-[#FFFC69];
+  }
+
+  .cura-accent {
+    @apply text-[#FFFC69];
+  }
+}
