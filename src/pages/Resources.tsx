@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Filter, BookOpen, Video, Headphones, FileText, Heart, Brain, Zap, Moon, Users, AlertTriangle } from 'lucide-react';
+import { Search, BookOpen, Video, Headphones, FileText, Heart, Brain, Zap, Moon, Users, AlertTriangle } from 'lucide-react';
 
 interface Resource {
   id: string;
