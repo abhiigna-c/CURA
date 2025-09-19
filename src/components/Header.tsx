@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, X, Heart, User, LogOut } from 'lucide-react';
+import { Menu, X, Heart, LogOut } from 'lucide-react';
 import { User as UserType } from '../App';
 
 interface HeaderProps {
