@@ -8,6 +8,7 @@ import { Resources } from './pages/Resources';
 import { Community } from './pages/Community';
 import { CrisisSupport } from './pages/CrisisSupport';
 import { AdminDashboard } from './pages/AdminDashboard';
+import { RelaxGame } from './pages/RelaxGame';
 import { ClerkAuth } from './components/ClerkAuth';
 import { RoleToggle } from './components/RoleToggle';
 
@@ -65,6 +66,8 @@ function AppContent() {
         return <Community user={user} />;
       case 'crisis':
         return <CrisisSupport />;
+      case 'relax':
+        return <RelaxGame />;
       case 'admin':
         return user?.role === 'admin' ? <AdminDashboard /> : <LandingPage onNavigate={handlePageChange} />;
       case 'sign-in':
