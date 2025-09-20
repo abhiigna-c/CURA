@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ClerkProvider, useUser, useAuth } from '@clerk/clerk-react';
+import { ClerkProvider, useUser } from '@clerk/clerk-react';
 import { Header } from './components/Header';
 import { LandingPage } from './pages/LandingPage';
 import { ChatBot } from './pages/ChatBot';
@@ -21,7 +21,6 @@ export type User = {
 // Main App Component with Clerk Integration
 function AppContent() {
   const { user: clerkUser, isLoaded } = useUser();
-  const { signOut } = useAuth();
   const [currentPage, setCurrentPage] = useState('landing');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -41,11 +40,6 @@ function AppContent() {
       setCurrentPage(page);
       setIsLoading(false);
     }, 300);
-  };
-
-  const handleLogout = async () => {
-    await signOut();
-    setCurrentPage('landing');
   };
 
   const renderPage = () => {
