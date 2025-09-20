@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Bot, User, MessageCircle, AlertTriangle, Phone, BookOpen, Brain, Activity, X } from 'lucide-react';
+import { Send, Bot, User, MessageCircle, AlertTriangle, Phone, BookOpen, Brain, Activity, X, Sparkles } from 'lucide-react';
+import { geminiService } from '../services/geminiService';
 
 interface Message {
   id: number;
@@ -47,7 +48,7 @@ export const ChatBot: React.FC = () => {
       // Initial welcome message
       setMessages([{
         id: 1,
-        text: "Hello! I'm CURA, your mental health companion. How are you feeling today? You can share anything with me - I'm here to listen and support you.",
+        text: "Hello! I'm CURA, your AI mental health companion powered by Google Gemini. How are you feeling today? You can share anything with me - I'm here to listen and support you with intelligent, empathetic responses.",
         isUser: false,
         timestamp: new Date(),
       }]);
@@ -81,66 +82,41 @@ export const ChatBot: React.FC = () => {
     return crisisKeywords.some(keyword => lowerText.includes(keyword));
   };
 
-  const getIntelligentResponse = (userMessage: string): string => {
-    const lowerMessage = userMessage.toLowerCase();
-
-    // Crisis detection
-    if (detectCrisis(userMessage)) {
-      setShowCrisisResources(true);
-      return "I'm concerned about what you're sharing. Your safety is the most important thing right now. Please reach out to someone you trust or contact emergency services immediately.";
+  const getIntelligentResponse = async (userMessage: string): Promise<string> => {
+    try {
+      // Use Gemini AI for intelligent responses
+      const response = await geminiService.generateResponse(userMessage);
+      
+      // Check if it's a crisis response and show crisis resources
+      if (response.includes('KIRAN Helpline') || response.includes('crisis')) {
+        setShowCrisisResources(true);
+      }
+      
+      return response;
+    } catch (error) {
+      console.error('Error getting AI response:', error);
+      
+      // Fallback to simple responses if Gemini fails
+      const lowerMessage = userMessage.toLowerCase();
+      
+      if (lowerMessage.includes('anxious') || lowerMessage.includes('anxiety')) {
+        return "I understand that anxiety can feel overwhelming. Try taking slow, deep breaths - inhale for 4 counts, hold for 4, and exhale for 6. This simple technique can help calm your nervous system.";
+      }
+      
+      if (lowerMessage.includes('sad') || lowerMessage.includes('depressed')) {
+        return "I hear that you're going through a difficult time. It's okay to feel sad, and your feelings are valid. Sometimes just talking about what's on your mind can help.";
+      }
+      
+      return "I'm here to listen and support you. Sometimes it helps to talk through what you're experiencing. What's on your mind today?";
     }
-
-    // Anxiety responses
-    if (lowerMessage.includes('anxious') || lowerMessage.includes('anxiety') || lowerMessage.includes('worried') || lowerMessage.includes('nervous')) {
-      return "I understand that anxiety can feel overwhelming. Let's try a breathing exercise together. Breathe in for 4 counts, hold for 4, and breathe out for 6. Would you like me to guide you through this?";
-    }
-
-    // Depression responses
-    if (lowerMessage.includes('depressed') || lowerMessage.includes('sad') || lowerMessage.includes('down') || lowerMessage.includes('empty')) {
-      return "I hear that you're going through a difficult time. Depression can make everything feel heavy. Remember that this feeling is temporary, even if it doesn't feel that way. What's one small thing that brought you even a tiny bit of comfort today?";
-    }
-
-    // Academic stress
-    if (lowerMessage.includes('study') || lowerMessage.includes('exam') || lowerMessage.includes('assignment') || lowerMessage.includes('academic') || lowerMessage.includes('grades')) {
-      return "Academic pressure can be really overwhelming. Let's break this down together. What specific aspect of your studies is causing the most stress right now? Sometimes talking through it can help us find a manageable approach.";
-    }
-
-    // Family pressure
-    if (lowerMessage.includes('family') || lowerMessage.includes('parents') || lowerMessage.includes('pressure') || lowerMessage.includes('expectations')) {
-      return "Family expectations can feel like a heavy weight. It's okay to feel overwhelmed by what others expect of you. Your feelings are valid. What would you like your family to understand about what you're going through?";
-    }
-
-    // Sleep issues
-    if (lowerMessage.includes('sleep') || lowerMessage.includes('tired') || lowerMessage.includes('insomnia') || lowerMessage.includes('exhausted')) {
-      return "Sleep is so important for your mental health. Try creating a bedtime routine: turn off screens 1 hour before bed, keep your room cool and dark, and practice relaxation techniques. How many hours of sleep are you getting?";
-    }
-
-    // Loneliness
-    if (lowerMessage.includes('lonely') || lowerMessage.includes('alone') || lowerMessage.includes('isolated')) {
-      return "Feeling lonely is more common than you think, especially in college. Consider joining student clubs, study groups, or our peer support community. Connection with others is vital for mental well-being. Would you like me to tell you about our community features?";
-    }
-
-    // General support
-    if (lowerMessage.includes('help') || lowerMessage.includes('support') || lowerMessage.includes('struggling')) {
-      return "I'm glad you reached out. It takes courage to ask for help. You're not alone in this. What would be most helpful for you right now - talking through your feelings, getting some practical advice, or just having someone listen?";
-    }
-
-    // Default responses
-    const defaultResponses = [
-      "Thank you for sharing that with me. I'm here to listen and support you. How does that make you feel?",
-      "I appreciate you opening up to me. Your feelings are valid and important. What would help you feel better right now?",
-      "I'm listening, and I care about what you're going through. Sometimes just talking about it can help. What else is on your mind?",
-      "Thank you for trusting me with this. You're being very brave by sharing. How can I best support you right now?"
-    ];
-
-    return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (inputText.trim()) {
+      const userMessage = inputText;
       const newMessage: Message = {
         id: Date.now(),
-        text: inputText,
+        text: userMessage,
         isUser: true,
         timestamp: new Date(),
       };
@@ -149,18 +125,34 @@ export const ChatBot: React.FC = () => {
       setInputText('');
       setIsTyping(true);
 
-      // Simulate bot response
-      setTimeout(() => {
+      try {
+        // Get AI response from Gemini
+        const aiResponse = await getIntelligentResponse(userMessage);
+        
         const botResponse: Message = {
           id: Date.now() + 1,
-          text: getIntelligentResponse(inputText),
+          text: aiResponse,
           isUser: false,
           timestamp: new Date(),
-          type: detectCrisis(inputText) ? 'crisis' : undefined
+          type: detectCrisis(userMessage) ? 'crisis' : undefined
         };
+        
         setMessages(prev => [...prev, botResponse]);
+      } catch (error) {
+        console.error('Error getting AI response:', error);
+        
+        // Fallback response
+        const fallbackResponse: Message = {
+          id: Date.now() + 1,
+          text: "I'm having trouble connecting right now, but I'm still here to listen. Please try again, or if you need immediate support, please reach out to our crisis resources.",
+          isUser: false,
+          timestamp: new Date(),
+        };
+        
+        setMessages(prev => [...prev, fallbackResponse]);
+      } finally {
         setIsTyping(false);
-      }, 1500);
+      }
     }
   };
 
@@ -194,6 +186,17 @@ export const ChatBot: React.FC = () => {
     }
   };
 
+  const clearChatHistory = () => {
+    setMessages([{
+      id: 1,
+      text: "Hello! I'm CURA, your AI mental health companion powered by Google Gemini. How are you feeling today? You can share anything with me - I'm here to listen and support you.",
+      isUser: false,
+      timestamp: new Date(),
+    }]);
+    geminiService.clearHistory();
+    localStorage.removeItem('cura-chat-history');
+  };
+
   const quickResponses = [
     "I'm feeling overwhelmed",
     "I'm having trouble sleeping",
@@ -222,9 +225,12 @@ export const ChatBot: React.FC = () => {
               <MessageCircle className="h-8 w-8 text-white" />
             </div>
           </div>
-          <h1 className="text-4xl font-bold cura-gradient-text mb-2">AI Mental Health Companion</h1>
+          <div className="flex items-center justify-center mb-2">
+            <Sparkles className="h-8 w-8 text-[#696cff] mr-3" />
+            <h1 className="text-4xl font-bold cura-gradient-text">AI Mental Health Companion</h1>
+          </div>
           <p className="text-gray-600 text-lg">
-            Your safe space to express, explore, and find support
+            Powered by Google Gemini AI • Your safe space to express, explore, and find support
           </p>
         </div>
 
@@ -299,6 +305,17 @@ export const ChatBot: React.FC = () => {
 
         {/* Chat Container */}
         <div className="cura-card p-6 h-[600px] flex flex-col">
+          {/* Chat Header */}
+          <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/20">
+            <h3 className="text-lg font-semibold text-gray-900">Chat with CURA AI</h3>
+            <button
+              onClick={clearChatHistory}
+              className="text-sm text-gray-500 hover:text-gray-700 transition-colors duration-200"
+            >
+              Clear Chat
+            </button>
+          </div>
+          
           {/* Messages */}
           <div className="flex-1 overflow-y-auto space-y-4 mb-6">
             {messages.map((message) => (
