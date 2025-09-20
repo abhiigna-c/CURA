@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { ClerkProvider, useUser, useAuth } from '@clerk/clerk-react';
 import { Header } from './components/Header';
 import { LandingPage } from './pages/LandingPage';
 import { ChatBot } from './pages/ChatBot';
@@ -7,8 +8,7 @@ import { Resources } from './pages/Resources';
 import { Community } from './pages/Community';
 import { CrisisSupport } from './pages/CrisisSupport';
 import { AdminDashboard } from './pages/AdminDashboard';
-import { LoginPage } from './pages/LoginPage';
-import { SignupPage } from './pages/SignupPage';
+import { ClerkAuth } from './components/ClerkAuth';
 
 export type User = {
   id: string;
@@ -18,10 +18,21 @@ export type User = {
   college: string;
 };
 
-function App() {
+// Main App Component with Clerk Integration
+function AppContent() {
+  const { user: clerkUser, isLoaded } = useUser();
+  const { signOut } = useAuth();
   const [currentPage, setCurrentPage] = useState('landing');
-  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Convert Clerk user to our User type
+  const user: User | null = clerkUser ? {
+    id: clerkUser.id,
+    name: clerkUser.fullName || clerkUser.firstName || 'Anonymous',
+    email: clerkUser.primaryEmailAddress?.emailAddress || '',
+    role: clerkUser.publicMetadata?.role as 'student' | 'admin' || 'student',
+    college: clerkUser.publicMetadata?.college as string || 'Unknown College'
+  } : null;
 
   // Simulate loading states
   const handlePageChange = (page: string) => {
@@ -32,18 +43,13 @@ function App() {
     }, 300);
   };
 
-  const handleLogin = (userData: User) => {
-    setUser(userData);
-    setCurrentPage('landing');
-  };
-
-  const handleLogout = () => {
-    setUser(null);
+  const handleLogout = async () => {
+    await signOut();
     setCurrentPage('landing');
   };
 
   const renderPage = () => {
-    if (isLoading) {
+    if (isLoading || !isLoaded) {
       return (
         <div className="min-h-screen flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
@@ -66,10 +72,10 @@ function App() {
         return <CrisisSupport />;
       case 'admin':
         return user?.role === 'admin' ? <AdminDashboard /> : <LandingPage onNavigate={handlePageChange} />;
-      case 'login':
-        return <LoginPage onLogin={handleLogin} onNavigate={handlePageChange} />;
-      case 'signup':
-        return <SignupPage onSignup={handleLogin} onNavigate={handlePageChange} />;
+      case 'sign-in':
+        return <ClerkAuth mode="sign-in" />;
+      case 'sign-up':
+        return <ClerkAuth mode="sign-up" />;
       default:
         return <LandingPage onNavigate={handlePageChange} />;
     }
@@ -80,13 +86,27 @@ function App() {
       <Header 
         user={user} 
         onNavigate={handlePageChange} 
-        onLogout={handleLogout}
         currentPage={currentPage}
       />
       <main className="transition-all duration-300 ease-in-out">
         {renderPage()}
       </main>
     </div>
+  );
+}
+
+// Main App Component with Clerk Provider
+function App() {
+  const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+
+  if (!publishableKey) {
+    throw new Error("Missing Publishable Key. Please add VITE_CLERK_PUBLISHABLE_KEY to your .env.local file");
+  }
+
+  return (
+    <ClerkProvider publishableKey={publishableKey}>
+      <AppContent />
+    </ClerkProvider>
   );
 }
 

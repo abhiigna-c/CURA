@@ -1,15 +1,15 @@
 import React from 'react';
-import { Menu, X, Heart, LogOut } from 'lucide-react';
+import { Menu, X, Heart } from 'lucide-react';
+import { UserButton } from '@clerk/clerk-react';
 import { User as UserType } from '../App';
 
 interface HeaderProps {
   user: UserType | null;
   onNavigate: (page: string) => void;
-  onLogout: () => void;
   currentPage: string;
 }
 
-export const Header: React.FC<HeaderProps> = ({ user, onNavigate, onLogout, currentPage }) => {
+export const Header: React.FC<HeaderProps> = ({ user, onNavigate, currentPage }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
   const navigationItems = [
@@ -63,24 +63,29 @@ export const Header: React.FC<HeaderProps> = ({ user, onNavigate, onLogout, curr
                   <p className="text-sm font-medium text-gray-900">{user.name}</p>
                   <p className="text-xs text-gray-500">{user.college}</p>
                 </div>
-                <button
-                  onClick={onLogout}
-                  className="flex items-center space-x-2 px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-full transition-colors duration-200"
-                >
-                  <LogOut className="h-4 w-4" />
-                  <span className="hidden sm:inline">Logout</span>
-                </button>
+                <UserButton 
+                  afterSignOutUrl="/"
+                  appearance={{
+                    elements: {
+                      avatarBox: "w-8 h-8",
+                      userButtonPopoverCard: "backdrop-blur-lg bg-white/90 border border-white/30",
+                      userButtonPopoverActionButton: "hover:bg-[#696cff]/10 text-gray-700",
+                      userButtonPopoverActionButtonText: "text-gray-700",
+                      userButtonPopoverFooter: "hidden"
+                    }
+                  }}
+                />
               </div>
             ) : (
               <div className="hidden lg:flex items-center space-x-3">
                 <button
-                  onClick={() => onNavigate('login')}
+                  onClick={() => onNavigate('sign-in')}
                   className="px-4 py-2 text-gray-700 hover:text-[#696cff] font-medium transition-colors duration-200"
                 >
                   Login
                 </button>
                 <button
-                  onClick={() => onNavigate('signup')}
+                  onClick={() => onNavigate('sign-up')}
                   className="px-6 py-2 bg-[#696cff] hover:bg-[#5a5df5] text-white rounded-full font-medium transition-all duration-200 hover:shadow-lg"
                 >
                   Sign Up
@@ -124,7 +129,7 @@ export const Header: React.FC<HeaderProps> = ({ user, onNavigate, onLogout, curr
               <div className="pt-4 space-y-2 border-t border-white/20">
                 <button
                   onClick={() => {
-                    onNavigate('login');
+                    onNavigate('sign-in');
                     setIsMobileMenuOpen(false);
                   }}
                   className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-white/60 rounded-lg text-sm font-medium transition-colors duration-200"
@@ -133,7 +138,7 @@ export const Header: React.FC<HeaderProps> = ({ user, onNavigate, onLogout, curr
                 </button>
                 <button
                   onClick={() => {
-                    onNavigate('signup');
+                    onNavigate('sign-up');
                     setIsMobileMenuOpen(false);
                   }}
                   className="block w-full px-4 py-3 bg-[#696cff] text-white rounded-lg text-sm font-medium transition-colors duration-200"
