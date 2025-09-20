@@ -62,6 +62,11 @@ export const Header: React.FC<HeaderProps> = ({ user, onNavigate, currentPage })
                 <div className="hidden sm:block text-right">
                   <p className="text-sm font-medium text-gray-900">{user.name}</p>
                   <p className="text-xs text-gray-500">{user.college}</p>
+                  <p className={`text-xs font-medium ${
+                    user.role === 'admin' ? 'text-purple-600' : 'text-blue-600'
+                  }`}>
+                    {user.role === 'admin' ? '👑 Admin' : '👤 Student'}
+                  </p>
                 </div>
                 <UserButton 
                   afterSignOutUrl="/"

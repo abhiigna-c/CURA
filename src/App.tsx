@@ -9,6 +9,7 @@ import { Community } from './pages/Community';
 import { CrisisSupport } from './pages/CrisisSupport';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { ClerkAuth } from './components/ClerkAuth';
+import { RoleToggle } from './components/RoleToggle';
 
 export type User = {
   id: string;
@@ -85,6 +86,9 @@ function AppContent() {
       <main className="transition-all duration-300 ease-in-out">
         {renderPage()}
       </main>
+      
+      {/* Role Toggle for Demo */}
+      {user && <RoleToggle />}
     </div>
   );
 }
