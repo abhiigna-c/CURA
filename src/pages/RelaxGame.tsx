@@ -63,6 +63,7 @@ export const RelaxGame: React.FC = () => {
     }
   };
 
+
   const resetBreathingCycle = () => {
     stopBreathingCycle();
     setCurrentCycle(0);
