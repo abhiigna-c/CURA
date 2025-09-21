@@ -1,1 +1,21 @@
-* text=auto eol=lf
+# Ensure consistent line endings across OSes
+# Treat these as text and normalize to LF in the repository
+* text=auto
+
+# Explicit rules for project source files
+*.ts text
+*.tsx text
+*.js text
+*.jsx text
+*.css text
+*.html text
+*.json text
+*.md text
+
+# Binary files — do not attempt to normalize
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary
+*.zip binary* text=auto eol=lf

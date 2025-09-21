@@ -21,7 +21,7 @@ export const RelaxGame: React.FC = () => {
     cycles: 5
   });
 
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<number | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
 
   // Create soothing background sounds
@@ -70,7 +70,7 @@ export const RelaxGame: React.FC = () => {
 
   useEffect(() => {
     if (isPlaying && timeLeft > 0) {
-      intervalRef.current = setTimeout(() => {
+      intervalRef.current = window.setTimeout(() => {
         setTimeLeft(timeLeft - 1);
       }, 1000);
     } else if (isPlaying && timeLeft === 0) {

@@ -1,5 +1,6 @@
 import React from 'react';
-import { ArrowRight, Star, Users, Shield, Heart, MessageCircle, Calendar, BookOpen, Headphones, Award } from 'lucide-react';
+import { ArrowRight, Star, Users, Shield, MessageCircle, Calendar, BookOpen, Play } from 'lucide-react';
+import MentalHealthConcerns from './MentalHealthConcerns';
 
 interface LandingPageProps {
   onNavigate: (page: string) => void;
@@ -31,7 +32,24 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
       description: "Connect with fellow students in a safe, supportive environment",
       gradient: "from-orange-500 to-red-500"
     }
+    ,
+    {
+      icon: Play,
+      title: "Relax",
+      description: "Guided breathing and short exercises to reduce stress and improve focus",
+      gradient: "from-indigo-500 to-violet-500"
+    }
   ];
+  
+
+  const featureNavigation = (title: string) => {
+    if (title.includes('AI')) return 'chat';
+    if (title.includes('Anonymous')) return 'appointments';
+    if (title.includes('Resources')) return 'resources';
+    if (title.includes('Peer')) return 'community';
+    if (title.includes('Relax')) return 'relax';
+    return 'landing';
+  };
 
   const testimonials = [
     {
@@ -121,12 +139,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-7">
             {features.map((feature, index) => (
               <div
                 key={index}
                 className="group backdrop-blur-lg bg-white/60 hover:bg-white/80 rounded-2xl p-6 border border-white/30 hover:border-white/50 transition-all duration-300 hover:shadow-2xl hover:scale-105 cursor-pointer"
-                onClick={() => onNavigate(feature.title.includes('AI') ? 'chat' : feature.title.includes('Anonymous') ? 'appointments' : feature.title.includes('Resources') ? 'resources' : 'community')}
+                onClick={() => onNavigate(featureNavigation(feature.title))}
               >
                 <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${feature.gradient} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
                   <feature.icon className="h-6 w-6 text-white" />
@@ -135,6 +153,40 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                 <p className="text-gray-600 leading-relaxed">{feature.description}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+ 
+     {/* Mental Health Concerns Section */}
+     <MentalHealthConcerns onNavigate={onNavigate} />
+
+      {/* CTA Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="backdrop-blur-lg bg-gradient-to-r from-[#696cff]/10 to-[#FFFC69]/10 rounded-3xl p-12 border border-white/30">
+            <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
+              Ready to Prioritize Your Mental Health?
+            </h2>
+            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+              Join thousands of students who have found support, guidance, and community through CURA.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                onClick={() => onNavigate('signup')}
+                className="bg-[#696cff] hover:bg-[#5a5df5] text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:shadow-xl hover:scale-105"
+              >
+                Get Started Free
+              </button>
+              
+              <button
+                onClick={() => onNavigate('crisis')}
+                className="bg-red-500 hover:bg-red-600 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:shadow-xl flex items-center space-x-2"
+              >
+                <Shield className="h-5 w-5" />
+                <span>Crisis Support</span>
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -167,37 +219,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="backdrop-blur-lg bg-gradient-to-r from-[#696cff]/10 to-[#FFFC69]/10 rounded-3xl p-12 border border-white/30">
-            <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
-              Ready to Prioritize Your Mental Health?
-            </h2>
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Join thousands of students who have found support, guidance, and community through CURA.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                onClick={() => onNavigate('signup')}
-                className="bg-[#696cff] hover:bg-[#5a5df5] text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:shadow-xl hover:scale-105"
-              >
-                Get Started Free
-              </button>
-              
-              <button
-                onClick={() => onNavigate('crisis')}
-                className="bg-red-500 hover:bg-red-600 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:shadow-xl flex items-center space-x-2"
-              >
-                <Shield className="h-5 w-5" />
-                <span>Crisis Support</span>
-              </button>
-            </div>
           </div>
         </div>
       </section>
