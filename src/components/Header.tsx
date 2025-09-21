@@ -19,7 +19,7 @@ export const Header: React.FC<HeaderProps> = ({ user, onNavigate, currentPage })
     { name: 'Resources', page: 'resources' },
     { name: 'Community', page: 'community' },
     { name: 'Crisis Support', page: 'crisis' },
-    { name: 'Relax Game', page: 'relax' },
+    { name: 'Relax', page: 'relax' },
   ];
 
   if (user?.role === 'admin') {
